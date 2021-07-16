@@ -1,5 +1,5 @@
 [package]
-name = "file-matcher-rs"
+name = "file-matcher"
 description = "A library to search files based on the name pattern (regex, wildmatch, exact)"
 license = "MIT"
 readme = "README.md"
@@ -10,7 +10,7 @@ keywords = ["filesystem", "files", "folders", "find", "search"]
 # 6 max
 categories = ["filesystem"]
 
-version = "0.2.3"
+version = "0.2.4"
 authors = ["feenk gmbh <contact@feenk.com>"]
 edition = "2018"
 

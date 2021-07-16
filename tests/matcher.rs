@@ -1,4 +1,4 @@
-use file_matcher_rs::{BoxError, FileNamed, FilesNamed};
+use file_matcher::{BoxError, FileNamed, FilesNamed};
 use std::ffi::OsStr;
 
 #[test]
