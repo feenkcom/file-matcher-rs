@@ -96,6 +96,10 @@ impl OneFileFilter {
         }
     }
 
+    pub fn as_path_buf(&self) -> Result<PathBuf> {
+        self.find()
+    }
+
     pub fn as_os_string(&self) -> Result<OsString> {
         let path = self.find()?;
         match path.file_name() {
