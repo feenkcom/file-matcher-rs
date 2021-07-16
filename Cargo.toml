@@ -10,7 +10,7 @@ keywords = ["filesystem", "files", "folders", "find", "search"]
 # 6 max
 categories = ["filesystem"]
 
-version = "0.2.0"
+version = "0.2.1"
 authors = ["feenk gmbh <contact@feenk.com>"]
 edition = "2018"
 

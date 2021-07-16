@@ -4,7 +4,9 @@ import hudson.tasks.junit.CaseResult
 
 pipeline {
     agent none
-    parameters { booleanParam(name: 'PUBLISH', defaultValue: false, description: 'Set to true to publish a new version to crates.io') }
+    parameters {
+        booleanParam(name: 'PUBLISH', defaultValue: false, description: 'Set to true to publish a new version to crates.io')
+        choice(name: 'PUBLISH_BUMP', choices: ['minor', 'patch', 'major'], description: 'What to bump when publishing') }
     options {
         buildDiscarder(logRotator(numToKeepStr: '50'))
         disableConcurrentBuilds()
@@ -145,7 +147,7 @@ pipeline {
                     --owner feenkcom \
                     --repo file-matcher-rs \
                     --token GITHUB_TOKEN \
-                    --bump-minor \
+                    --bump-${params.PUBLISH_BUMP} \
                     --auto-accept """
             }
         }
