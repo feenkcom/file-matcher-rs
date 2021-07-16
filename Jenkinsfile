@@ -98,31 +98,6 @@ pipeline {
                 }
             }
         }
-        stage ('Release') {
-            agent {
-                label "${LINUX_AMD64_TARGET}"
-            }
-            environment {
-                TARGET = "${LINUX_AMD64_TARGET}"
-            }
-            when {
-                expression {
-                    (currentBuild.result == null || currentBuild.result == 'SUCCESS') && env.BRANCH_NAME.toString().equals('main') && !params.PUBLISH
-                }
-            }
-            steps {
-                sh "wget -O feenk-releaser https://github.com/feenkcom/releaser-rs/releases/latest/download/feenk-releaser-${TARGET}"
-                sh "chmod +x feenk-releaser"
-
-                sh """
-                ./feenk-releaser \
-                    --owner feenkcom \
-                    --repo file-matcher-rs \
-                    --token GITHUB_TOKEN \
-                    --bump-patch \
-                    --auto-accept """
-            }
-        }
         stage ('Publish') {
             agent {
                 label "${LINUX_AMD64_TARGET}"
