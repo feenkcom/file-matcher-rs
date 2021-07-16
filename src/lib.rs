@@ -10,8 +10,8 @@ pub(crate) mod finders;
 
 use std::path::PathBuf;
 
-pub use error::{BoxError, Error};
-pub use filters::{MultipleFilesFilter, OneFileFilter};
+pub use error::{BoxError, Error, Result};
+pub use filters::{FilesFilter, MultipleFilesFilter, OneFileFilter};
 
 #[derive(Debug, Clone)]
 pub enum FileNamed {

@@ -1,4 +1,5 @@
-use crate::{BoxError, FilesNamed};
+use crate::filters::FilesFilter;
+use crate::{FilesNamed, Result};
 use std::path::PathBuf;
 
 #[derive(Debug, Clone)]
@@ -15,7 +16,7 @@ impl MultipleFilesFilter {
         }
     }
 
-    pub fn find(&self) -> Result<Vec<PathBuf>, BoxError> {
+    pub fn find(&self) -> Result<Vec<PathBuf>> {
         match &self.name {
             FilesNamed::Exact(name) => {
                 let file = self.directory.join(name);
@@ -51,5 +52,15 @@ impl MultipleFilesFilter {
                 Ok(files)
             }
         }
+    }
+}
+
+impl FilesFilter for MultipleFilesFilter {
+    fn all(&self) -> Result<Vec<PathBuf>> {
+        self.find()
+    }
+
+    fn into_filter(self) -> Box<dyn FilesFilter> {
+        Box::new(self)
     }
 }

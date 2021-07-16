@@ -1,4 +1,7 @@
-use crate::{BoxError, Error, FileNamed};
+use crate::filters::FilesFilter;
+use crate::{Error, FileNamed, Result};
+use std::ffi::OsString;
+use std::io::Read;
 use std::path::PathBuf;
 
 #[derive(Debug, Clone)]
@@ -15,7 +18,7 @@ impl OneFileFilter {
         }
     }
 
-    pub fn find(&self) -> Result<PathBuf, BoxError> {
+    pub fn find(&self) -> Result<PathBuf> {
         match &self.name {
             FileNamed::Exact(name) => {
                 let file = self.directory.join(name);
@@ -92,12 +95,92 @@ impl OneFileFilter {
             }
         }
     }
+
+    pub fn as_os_string(&self) -> Result<OsString> {
+        let path = self.find()?;
+        match path.file_name() {
+            None => Err(Error::new(format!("Could not get the file name of {:?}", &path)).boxed()),
+            Some(file_name) => Ok(file_name.to_os_string()),
+        }
+    }
+
+    pub fn as_string(&self) -> Result<String> {
+        let file_name = self.as_os_string()?;
+        match file_name.to_str() {
+            None => Err(Error::new(format!(
+                "Could not convert the file name to Unicode String {:?}",
+                &file_name
+            ))
+            .boxed()),
+            Some(file_name) => Ok(file_name.to_owned()),
+        }
+    }
+
+    pub fn as_bytes(&self) -> Result<Vec<u8>> {
+        let path = self.find()?;
+        let mut file = std::fs::File::open(path)?;
+        let mut buffer = Vec::new();
+        file.read_to_end(&mut buffer)?;
+        Ok(buffer)
+    }
+}
+
+impl FilesFilter for OneFileFilter {
+    fn all(&self) -> Result<Vec<PathBuf>> {
+        self.find().map(|file| vec![file])
+    }
+
+    fn into_filter(self) -> Box<dyn FilesFilter> {
+        Box::new(self)
+    }
 }
 
 impl From<OneFileFilter> for PathBuf {
     fn from(filter: OneFileFilter) -> Self {
+        PathBuf::from(&filter)
+    }
+}
+
+impl From<&OneFileFilter> for PathBuf {
+    fn from(filter: &OneFileFilter) -> Self {
         filter
             .find()
             .expect("Could not find exactly one matching file")
+    }
+}
+
+impl From<&OneFileFilter> for Result<OsString> {
+    fn from(filter: &OneFileFilter) -> Self {
+        filter.as_os_string()
+    }
+}
+
+impl From<OneFileFilter> for Result<OsString> {
+    fn from(filter: OneFileFilter) -> Self {
+        (&filter).into()
+    }
+}
+
+impl From<&OneFileFilter> for Result<String> {
+    fn from(filter: &OneFileFilter) -> Self {
+        filter.as_string()
+    }
+}
+
+impl From<OneFileFilter> for Result<String> {
+    fn from(filter: OneFileFilter) -> Self {
+        (&filter).into()
+    }
+}
+
+impl From<&OneFileFilter> for Result<Vec<u8>> {
+    fn from(filter: &OneFileFilter) -> Self {
+        filter.as_bytes()
+    }
+}
+
+impl From<OneFileFilter> for Result<Vec<u8>> {
+    fn from(filter: OneFileFilter) -> Self {
+        (&filter).into()
     }
 }

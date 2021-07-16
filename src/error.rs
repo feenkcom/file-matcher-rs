@@ -1,4 +1,5 @@
 pub type BoxError = std::boxed::Box<dyn std::error::Error>;
+pub type Result<T> = core::result::Result<T, BoxError>;
 
 #[derive(Debug)]
 pub struct Error {
