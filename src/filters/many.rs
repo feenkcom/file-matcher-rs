@@ -2,13 +2,13 @@ use crate::{BoxError, FilesNamed};
 use std::path::PathBuf;
 
 #[derive(Debug, Clone)]
-pub struct MultipleFilesFilter<'name> {
-    name: FilesNamed<'name>,
+pub struct MultipleFilesFilter {
+    name: FilesNamed,
     directory: PathBuf,
 }
 
-impl<'name> MultipleFilesFilter<'name> {
-    pub fn new(name: FilesNamed<'name>, directory: impl Into<PathBuf>) -> Self {
+impl MultipleFilesFilter {
+    pub fn new(name: FilesNamed, directory: impl Into<PathBuf>) -> Self {
         Self {
             name,
             directory: directory.into(),

@@ -2,13 +2,13 @@ use crate::{BoxError, Error, FileNamed};
 use std::path::PathBuf;
 
 #[derive(Debug, Clone)]
-pub struct OneFileFilter<'name> {
-    name: FileNamed<'name>,
+pub struct OneFileFilter {
+    name: FileNamed,
     directory: PathBuf,
 }
 
-impl<'name> OneFileFilter<'name> {
-    pub fn new(name: FileNamed<'name>, directory: impl Into<PathBuf>) -> Self {
+impl OneFileFilter {
+    pub fn new(name: FileNamed, directory: impl Into<PathBuf>) -> Self {
         Self {
             name,
             directory: directory.into(),
@@ -94,8 +94,8 @@ impl<'name> OneFileFilter<'name> {
     }
 }
 
-impl<'name> From<OneFileFilter<'name>> for PathBuf {
-    fn from(filter: OneFileFilter<'name>) -> Self {
+impl From<OneFileFilter> for PathBuf {
+    fn from(filter: OneFileFilter) -> Self {
         filter
             .find()
             .expect("Could not find exactly one matching file")

@@ -3,14 +3,14 @@ use std::ffi::OsStr;
 
 #[test]
 pub fn one_exact() -> Result<(), BoxError> {
-    let file = FileNamed::Exact("cat.txt").within("tests/assets").find()?;
+    let file = FileNamed::exact("cat.txt").within("tests/assets").find()?;
     assert_eq!(file.file_name().unwrap(), "cat.txt");
     Ok(())
 }
 
 #[test]
 pub fn one_any() -> Result<(), BoxError> {
-    let file = FileNamed::Any(vec!["cat.txt", "bird.txt"])
+    let file = FileNamed::any(vec!["cat.txt", "bird.txt"])
         .within("tests/assets")
         .find()?;
     assert_eq!(file.file_name().unwrap(), "cat.txt");
@@ -19,21 +19,21 @@ pub fn one_any() -> Result<(), BoxError> {
 
 #[test]
 pub fn one_regex() -> Result<(), BoxError> {
-    let file = FileNamed::Regex("cat.*").within("tests/assets").find()?;
+    let file = FileNamed::regex("cat.*").within("tests/assets").find()?;
     assert_eq!(file.file_name().unwrap(), "cat.txt");
     Ok(())
 }
 
 #[test]
 pub fn one_wildmatch() -> Result<(), BoxError> {
-    let file = FileNamed::Wildmatch("cat*").within("tests/assets").find()?;
+    let file = FileNamed::wildmatch("cat*").within("tests/assets").find()?;
     assert_eq!(file.file_name().unwrap(), "cat.txt");
     Ok(())
 }
 
 #[test]
 pub fn many_exact() -> Result<(), BoxError> {
-    let files = FilesNamed::Exact("cat.txt").within("tests/assets").find()?;
+    let files = FilesNamed::exact("cat.txt").within("tests/assets").find()?;
 
     let file_names = files
         .iter()
@@ -46,7 +46,7 @@ pub fn many_exact() -> Result<(), BoxError> {
 
 #[test]
 pub fn many_any() -> Result<(), BoxError> {
-    let files = FilesNamed::Any(vec!["cat.txt", "dog.txt", "bird.txt"])
+    let files = FilesNamed::any(vec!["cat.txt", "dog.txt", "bird.txt"])
         .within("tests/assets")
         .find()?;
 
@@ -62,7 +62,7 @@ pub fn many_any() -> Result<(), BoxError> {
 
 #[test]
 pub fn many_regex() -> Result<(), BoxError> {
-    let files = FilesNamed::Regex(".*\\.txt")
+    let files = FilesNamed::regex(".*\\.txt")
         .within("tests/assets")
         .find()?;
 
@@ -78,7 +78,7 @@ pub fn many_regex() -> Result<(), BoxError> {
 
 #[test]
 pub fn many_wildmatch() -> Result<(), BoxError> {
-    let files = FilesNamed::Wildmatch("*.txt")
+    let files = FilesNamed::wildmatch("*.txt")
         .within("tests/assets")
         .find()?;
 

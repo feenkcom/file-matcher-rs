@@ -14,33 +14,69 @@ pub use error::{BoxError, Error};
 pub use filters::{MultipleFilesFilter, OneFileFilter};
 
 #[derive(Debug, Clone)]
-pub enum FileNamed<'name> {
-    Exact(&'name str),
-    Any(Vec<&'name str>),
+pub enum FileNamed {
+    Exact(String),
+    Any(Vec<String>),
     #[cfg(feature = "regex")]
-    Regex(&'name str),
+    Regex(String),
     #[cfg(feature = "wildmatch")]
-    Wildmatch(&'name str),
+    Wildmatch(String),
 }
 
 #[derive(Debug, Clone)]
-pub enum FilesNamed<'name> {
-    Exact(&'name str),
-    Any(Vec<&'name str>),
+pub enum FilesNamed {
+    Exact(String),
+    Any(Vec<String>),
     #[cfg(feature = "regex")]
-    Regex(&'name str),
+    Regex(String),
     #[cfg(feature = "wildmatch")]
-    Wildmatch(&'name str),
+    Wildmatch(String),
 }
 
-impl<'name> FileNamed<'name> {
-    pub fn within(&self, directory: impl Into<PathBuf>) -> OneFileFilter<'name> {
+impl FileNamed {
+    pub fn within(&self, directory: impl Into<PathBuf>) -> OneFileFilter {
         OneFileFilter::new(self.clone(), directory)
+    }
+
+    pub fn exact(name: impl Into<String>) -> Self {
+        Self::Exact(name.into())
+    }
+
+    pub fn any(names: Vec<impl Into<String>>) -> Self {
+        Self::Any(names.into_iter().map(|name| name.into()).collect())
+    }
+
+    #[cfg(feature = "regex")]
+    pub fn regex(pattern: impl Into<String>) -> Self {
+        Self::Regex(pattern.into())
+    }
+
+    #[cfg(feature = "wildmatch")]
+    pub fn wildmatch(pattern: impl Into<String>) -> Self {
+        Self::Wildmatch(pattern.into())
     }
 }
 
-impl<'name> FilesNamed<'name> {
-    pub fn within(&self, directory: impl Into<PathBuf>) -> MultipleFilesFilter<'name> {
+impl FilesNamed {
+    pub fn within(&self, directory: impl Into<PathBuf>) -> MultipleFilesFilter {
         MultipleFilesFilter::new(self.clone(), directory)
+    }
+
+    pub fn exact(name: impl Into<String>) -> Self {
+        Self::Exact(name.into())
+    }
+
+    pub fn any(names: Vec<impl Into<String>>) -> Self {
+        Self::Any(names.into_iter().map(|name| name.into()).collect())
+    }
+
+    #[cfg(feature = "regex")]
+    pub fn regex(pattern: impl Into<String>) -> Self {
+        Self::Regex(pattern.into())
+    }
+
+    #[cfg(feature = "wildmatch")]
+    pub fn wildmatch(pattern: impl Into<String>) -> Self {
+        Self::Wildmatch(pattern.into())
     }
 }
