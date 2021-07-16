@@ -1,0 +1,24 @@
+[package]
+name = "file-matcher-rs"
+description = "A library to search files based on the name pattern (regex, wildmatch, exact)"
+license-file = "LICENSE"
+readme = "README.md"
+homepage = "https://github.com/feenkcom/file-matcher-rs"
+repository = "https://github.com/feenkcom/file-matcher-rs"
+# 5 max
+keywords = ["filesystem", "files", "folders", "find", "search"]
+# 6 max
+categories = ["filesystem"]
+
+version = "0.1.0"
+authors = ["feenk gmbh <contact@feenk.com>"]
+edition = "2018"
+
+[lib]
+
+[dependencies]
+regex = { version = "1", optional = true }
+wildmatch = { version = "2", optional = true }
+
+[features]
+all = [ "regex", "wildmatch" ]
