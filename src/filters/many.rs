@@ -1,4 +1,5 @@
 use crate::filters::FilesFilter;
+use crate::utils::is_readable_file;
 use crate::{FilesNamed, Result};
 use std::path::PathBuf;
 
@@ -20,7 +21,7 @@ impl MultipleFilesFilter {
         match &self.name {
             FilesNamed::Exact(name) => {
                 let file = self.directory.join(name);
-                if file.exists() {
+                if is_readable_file(&file) {
                     Ok(vec![file])
                 } else {
                     Ok(vec![])
@@ -30,7 +31,7 @@ impl MultipleFilesFilter {
                 let files = names
                     .iter()
                     .map(|each| self.directory.join(each))
-                    .filter(|each| each.exists())
+                    .filter(|each| is_readable_file(each))
                     .collect::<Vec<PathBuf>>();
 
                 Ok(files)

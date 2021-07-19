@@ -1,4 +1,5 @@
 use crate::filters::FilesFilter;
+use crate::utils::is_readable_file;
 use crate::{Error, FileNamed, Result};
 use std::ffi::OsString;
 use std::io::Read;
@@ -22,7 +23,7 @@ impl OneFileFilter {
         match &self.name {
             FileNamed::Exact(name) => {
                 let file = self.directory.join(name);
-                if file.exists() {
+                if is_readable_file(&file) {
                     Ok(file)
                 } else {
                     Err(Error::new(format!(
@@ -36,7 +37,7 @@ impl OneFileFilter {
                 let files = names
                     .iter()
                     .map(|each| self.directory.join(each))
-                    .filter(|each| each.exists())
+                    .filter(|each| is_readable_file(each))
                     .collect::<Vec<PathBuf>>();
 
                 match files.len() {

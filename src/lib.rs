@@ -7,12 +7,14 @@ extern crate wildmatch;
 mod error;
 mod filters;
 pub(crate) mod finders;
+mod utils;
 
 use std::path::PathBuf;
 
 pub use error::{BoxError, Error, Result};
 pub use filters::{FilesFilter, MultipleFilesFilter, OneFileFilter};
 
+/// Defines a file with various name types. It is required that exactly one file with a given name description exists.
 #[derive(Debug, Clone)]
 pub enum FileNamed {
     Exact(String),
