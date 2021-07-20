@@ -1,15 +1,15 @@
-use crate::filters::FilesFilter;
+use crate::files::Files;
 use crate::utils::is_readable_file;
 use crate::{FilesNamed, Result};
 use std::path::PathBuf;
 
 #[derive(Debug, Clone)]
-pub struct MultipleFilesFilter {
+pub struct MultipleFiles {
     name: FilesNamed,
     directory: PathBuf,
 }
 
-impl MultipleFilesFilter {
+impl MultipleFiles {
     pub fn new(name: FilesNamed, directory: impl Into<PathBuf>) -> Self {
         Self {
             name,
@@ -31,7 +31,7 @@ impl MultipleFilesFilter {
                 let files = names
                     .iter()
                     .map(|each| self.directory.join(each))
-                    .filter(|each| is_readable_file(each))
+                    .filter(|each| is_readable_file(each.as_path()))
                     .collect::<Vec<PathBuf>>();
 
                 Ok(files)
@@ -56,12 +56,12 @@ impl MultipleFilesFilter {
     }
 }
 
-impl FilesFilter for MultipleFilesFilter {
+impl Files for MultipleFiles {
     fn all(&self) -> Result<Vec<PathBuf>> {
         self.find()
     }
 
-    fn into_filter(self) -> Box<dyn FilesFilter> {
+    fn into_files(self) -> Box<dyn Files> {
         Box::new(self)
     }
 }

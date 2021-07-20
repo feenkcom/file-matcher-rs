@@ -1,26 +1,30 @@
-use crate::filters::FilesFilter;
+use crate::files::Files;
 use crate::utils::is_readable_file;
-use crate::{Error, FileNamed, Result};
+use crate::{Error, FileNamed, Result, OneFileNamed};
 use std::ffi::OsString;
 use std::io::Read;
 use std::path::PathBuf;
 
-#[derive(Debug, Clone)]
-pub struct OneFileFilter {
-    name: FileNamed,
+#[derive(Debug)]
+pub struct OneFile {
+    name: Box<dyn OneFileNamed>,
     directory: PathBuf,
 }
 
-impl OneFileFilter {
-    pub fn new(name: FileNamed, directory: impl Into<PathBuf>) -> Self {
+impl OneFile {
+    pub fn new(name: Box<dyn OneFileNamed>, directory: impl Into<PathBuf>) -> Self {
         Self {
             name,
             directory: directory.into(),
         }
     }
 
+    pub fn name(&self) -> &dyn OneFileNamed {
+        self.name.as_ref()
+    }
+
     pub fn find(&self) -> Result<PathBuf> {
-        match &self.name {
+        match self.name.name_type() {
             FileNamed::Exact(name) => {
                 let file = self.directory.join(name);
                 if is_readable_file(&file) {
@@ -37,7 +41,7 @@ impl OneFileFilter {
                 let files = names
                     .iter()
                     .map(|each| self.directory.join(each))
-                    .filter(|each| is_readable_file(each))
+                    .filter(|each| is_readable_file(each.as_path()))
                     .collect::<Vec<PathBuf>>();
 
                 match files.len() {
@@ -130,62 +134,68 @@ impl OneFileFilter {
     }
 }
 
-impl FilesFilter for OneFileFilter {
+impl Clone for OneFile {
+    fn clone(&self) -> Self {
+        Self::new(self.name.boxed(), self.directory.clone())
+    }
+}
+
+impl Files for OneFile {
     fn all(&self) -> Result<Vec<PathBuf>> {
         self.find().map(|file| vec![file])
     }
 
-    fn into_filter(self) -> Box<dyn FilesFilter> {
+    fn into_files(self) -> Box<dyn Files> {
         Box::new(self)
     }
 }
 
-impl From<OneFileFilter> for PathBuf {
-    fn from(filter: OneFileFilter) -> Self {
+impl From<OneFile> for PathBuf {
+    fn from(filter: OneFile) -> Self {
         PathBuf::from(&filter)
     }
 }
 
-impl From<&OneFileFilter> for PathBuf {
-    fn from(filter: &OneFileFilter) -> Self {
+impl From<&OneFile> for PathBuf {
+    fn from(filter: &OneFile) -> Self {
         filter
             .find()
             .expect("Could not find exactly one matching file")
     }
 }
 
-impl From<&OneFileFilter> for Result<OsString> {
-    fn from(filter: &OneFileFilter) -> Self {
+impl From<&OneFile> for Result<OsString> {
+    fn from(filter: &OneFile) -> Self {
         filter.as_os_string()
     }
 }
 
-impl From<OneFileFilter> for Result<OsString> {
-    fn from(filter: OneFileFilter) -> Self {
+impl From<OneFile> for Result<OsString> {
+    fn from(filter: OneFile) -> Self {
         (&filter).into()
     }
 }
 
-impl From<&OneFileFilter> for Result<String> {
-    fn from(filter: &OneFileFilter) -> Self {
+impl From<&OneFile> for Result<String> {
+    fn from(filter: &OneFile) -> Self {
         filter.as_string()
     }
 }
 
-impl From<OneFileFilter> for Result<String> {
-    fn from(filter: OneFileFilter) -> Self {
+impl From<OneFile> for Result<String> {
+    fn from(filter: OneFile) -> Self {
         (&filter).into()
     }
 }
 
-impl From<&OneFileFilter> for Result<Vec<u8>> {
-    fn from(filter: &OneFileFilter) -> Self {
+impl From<&OneFile> for Result<Vec<u8>> {
+    fn from(filter: &OneFile) -> Self {
         filter.as_bytes()
     }
 }
 
-impl From<OneFileFilter> for Result<Vec<u8>> {
-    fn from(filter: OneFileFilter) -> Self {
+impl From<OneFile> for Result<Vec<u8>> {
+    fn from(filter: OneFile) -> Self {
         (&filter).into()
     }
 }

@@ -1,10 +1,39 @@
-use file_matcher::{BoxError, FileNamed, FilesNamed};
+use file_matcher::{BoxError, FileNamed, FilesNamed, OneFileCopier};
 use std::ffi::OsStr;
+use std::path::PathBuf;
 
 #[test]
 pub fn one_exact() -> Result<(), BoxError> {
     let file = FileNamed::exact("cat.txt").within("tests/assets").find()?;
     assert_eq!(file.file_name().unwrap(), "cat.txt");
+    Ok(())
+}
+
+#[test]
+pub fn copy_one_exact() -> Result<(), BoxError> {
+    let file = FileNamed::exact("cat.txt").within("tests/assets");
+
+    std::fs::create_dir_all("tests/assets/copy_one_exact/")?;
+    let copied = file.copy("tests/assets/copy_one_exact/")?;
+
+    assert_eq!(&copied, &PathBuf::from("tests/assets/copy_one_exact/cat.txt"));
+
+    std::fs::remove_file(copied)?;
+    std::fs::remove_dir_all("tests/assets/copy_one_exact/")?;
+    Ok(())
+}
+
+#[test]
+pub fn copy_one_exact_alias() -> Result<(), BoxError> {
+    let file = FileNamed::exact("cat.txt").alias("kitty.txt").within("tests/assets");
+
+    std::fs::create_dir_all("tests/assets/copy_one_exact_alias/")?;
+    let copied = file.copy("tests/assets/copy_one_exact_alias/")?;
+
+    assert_eq!(&copied, &PathBuf::from("tests/assets/copy_one_exact_alias/kitty.txt"));
+
+    std::fs::remove_file(copied)?;
+    std::fs::remove_dir_all("tests/assets/copy_one_exact_alias/")?;
     Ok(())
 }
 

@@ -10,7 +10,7 @@ keywords = ["filesystem", "files", "folders", "find", "search"]
 # 6 max
 categories = ["filesystem"]
 
-version = "0.3.0"
+version = "0.4.0"
 authors = ["feenk gmbh <contact@feenk.com>"]
 edition = "2018"
 
@@ -21,5 +21,7 @@ regex = { version = "1", optional = true }
 wildmatch = { version = "2", optional = true }
 
 [features]
-all = [ "regex", "wildmatch" ]
+copier = [ ]
+mover = [ ]
+all = [ "regex", "wildmatch", "copier", "mover" ]
 default = [ "all" ]

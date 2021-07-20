@@ -6,7 +6,7 @@ pub(crate) fn readable_files_in_folder(folder: impl AsRef<Path>) -> Vec<PathBuf>
         dir.filter(|each_entry| each_entry.is_ok())
             .map(|each_entry| each_entry.unwrap())
             .map(|each_entry| each_entry.path())
-            .filter(|each_path| is_readable_file(each_path))
+            .filter(|each_path| is_readable_file(each_path.as_path()))
             .collect::<Vec<PathBuf>>()
     })
 }
