@@ -1,39 +1,52 @@
-use crate::{FileNamed, OneFileNamed, OneFile};
+use crate::{EntryName, EntryType, OneEntry, OneEntryNamed};
 use std::path::PathBuf;
 
-#[derive(Debug, Clone)]
-pub struct FileAlias {
-    file_named: FileNamed,
+#[derive(Debug)]
+pub struct EntityAlias {
+    entity_named: Box<dyn OneEntryNamed>,
     alias: String,
 }
 
-impl FileAlias {
-    pub fn new(file_named: FileNamed, alias: impl Into<String>) -> Self {
+impl Clone for EntityAlias {
+    fn clone(&self) -> Self {
         Self {
-            file_named,
+            entity_named: self.entity_named.boxed(),
+            alias: self.alias.clone(),
+        }
+    }
+}
+
+impl EntityAlias {
+    pub fn new(entity_named: Box<dyn OneEntryNamed>, alias: impl Into<String>) -> Self {
+        Self {
+            entity_named,
             alias: alias.into(),
         }
     }
 
-    pub fn within(&self, directory: impl Into<PathBuf>) -> OneFile {
+    pub fn within(&self, directory: impl Into<PathBuf>) -> OneEntry {
         self.within_path_buf(directory.into())
     }
 }
 
-impl OneFileNamed for FileAlias {
-    fn within_path_buf(&self, directory: PathBuf) -> OneFile {
-        OneFile::new(self.boxed(), directory)
+impl OneEntryNamed for EntityAlias {
+    fn within_path_buf(&self, directory: PathBuf) -> OneEntry {
+        OneEntry::new(self.boxed(), directory)
     }
 
-    fn name_type(&self) -> &FileNamed {
-        self.file_named.name_type()
+    fn entry_name(&self) -> &EntryName {
+        self.entity_named.entry_name()
+    }
+
+    fn entry_type(&self) -> &EntryType {
+        self.entity_named.entry_type()
     }
 
     fn name_alias(&self) -> Option<&str> {
         Some(self.alias.as_str())
     }
 
-    fn boxed(&self) -> Box<dyn OneFileNamed> {
+    fn boxed(&self) -> Box<dyn OneEntryNamed> {
         Box::new(self.clone())
     }
 }

@@ -1,9 +1,9 @@
 #[cfg(feature = "copier")]
 mod copier;
 #[cfg(feature = "copier")]
-pub use copier::OneFileCopier;
+pub use copier::OneEntryCopier;
 
 #[cfg(feature = "mover")]
 mod mover;
 #[cfg(feature = "mover")]
-pub use mover::OneFileMover;
+pub use mover::OneEntryMover;

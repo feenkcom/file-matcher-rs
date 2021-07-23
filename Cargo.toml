@@ -1,6 +1,6 @@
 [package]
 name = "file-matcher"
-description = "A library to search files based on the name pattern (regex, wildmatch, exact)"
+description = "A library to search files and folders based on the name pattern (regex, wildmatch, exact)"
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/feenkcom/file-matcher-rs"
@@ -10,7 +10,7 @@ keywords = ["filesystem", "files", "folders", "find", "search"]
 # 6 max
 categories = ["filesystem"]
 
-version = "0.4.0"
+version = "0.5.0"
 authors = ["feenk gmbh <contact@feenk.com>"]
 edition = "2018"
 
@@ -19,9 +19,13 @@ edition = "2018"
 [dependencies]
 regex = { version = "1", optional = true }
 wildmatch = { version = "2", optional = true }
+fs_extra = { version = "1.2.0", optional = true }
+
+[dev-dependencies]
+tempdir = "0.3.7"
 
 [features]
-copier = [ ]
-mover = [ ]
+copier = [ "fs_extra" ]
+mover = [ "fs_extra" ]
 all = [ "regex", "wildmatch", "copier", "mover" ]
 default = [ "all" ]

@@ -1,18 +1,19 @@
 #[cfg(not(feature = "wildmatch"))]
 compile_error!("Please select a wildmatch feature to build with wildmatch support");
 
-use crate::utils::readable_files_in_folder;
-use crate::Result;
+use crate::utils::readable_entries_in_folder;
+use crate::{EntryType, Result};
 use std::path::{Path, PathBuf};
 use wildmatch::WildMatch;
 
-pub(crate) fn find_files_in_directory_matching(
-    file_name_wildmatch: &str,
+pub(crate) fn find_entries_in_directory_matching(
+    entity_type: &EntryType,
+    entity_name_wildmatch: &str,
     directory: impl AsRef<Path>,
 ) -> Result<Vec<PathBuf>> {
-    let compiled_wildmatch = WildMatch::new(file_name_wildmatch);
+    let compiled_wildmatch = WildMatch::new(entity_name_wildmatch);
 
-    let files = readable_files_in_folder(directory)
+    let files = readable_entries_in_folder(entity_type, directory)
         .into_iter()
         .filter(|each_path| {
             each_path.file_name().map_or(false, |file_name| {
