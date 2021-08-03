@@ -27,8 +27,17 @@ impl ManyEntries {
 
     pub fn find(&self) -> Result<Vec<PathBuf>> {
         let entry_type = self.entries_named.entry_type();
+        let entry_name = self.entries_named.entry_name();
 
-        match self.entries_named.entry_name() {
+        self.find_by_type_and_name(entry_type, entry_name)
+    }
+
+    fn find_by_type_and_name(
+        &self,
+        entry_type: &EntryType,
+        entry_name: &EntryName,
+    ) -> Result<Vec<PathBuf>> {
+        match entry_name {
             EntryName::Exact(name) => {
                 let entry = self.directory.join(name);
                 if is_readable_entry(entry_type, &entry) {
@@ -43,6 +52,17 @@ impl ManyEntries {
                     .map(|each| self.directory.join(each))
                     .filter(|each| is_readable_entry(entry_type, each.as_path()))
                     .collect::<Vec<PathBuf>>();
+
+                Ok(entries)
+            }
+            EntryName::AnyNamed(entry_names) => {
+                let mut entries: Vec<PathBuf> = vec![];
+
+                for entry_name in entry_names {
+                    for each_path in self.find_by_type_and_name(entry_type, entry_name)? {
+                        entries.push(each_path);
+                    }
+                }
 
                 Ok(entries)
             }

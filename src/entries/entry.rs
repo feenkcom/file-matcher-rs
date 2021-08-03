@@ -5,6 +5,7 @@ use std::fmt::Debug;
 pub enum EntryName {
     Exact(String),
     Any(Vec<String>),
+    AnyNamed(Vec<EntryName>),
     #[cfg(feature = "regex")]
     Regex(String),
     #[cfg(feature = "wildmatch")]

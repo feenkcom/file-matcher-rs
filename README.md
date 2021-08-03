@@ -22,7 +22,7 @@ FileNamed::regex("cat.*")
 
 Use `FolderNamed` to search for exactly one folder matching the name pattern. Returns an `Error` if none or more than one folder was found.
 ```rust
-FileNamed::wildmatch("cat*")
+FolderNamed::wildmatch("cat*")
     .within("tests/assets")
     .find()?
 ```

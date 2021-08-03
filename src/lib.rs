@@ -106,6 +106,15 @@ impl FileNamed {
         )))
     }
 
+    pub fn any_named(names: Vec<FileNamed>) -> Self {
+        Self(EntryNamed::file(EntryName::AnyNamed(
+            names
+                .into_iter()
+                .map(|name| name.entry_name().clone())
+                .collect(),
+        )))
+    }
+
     #[cfg(feature = "regex")]
     pub fn regex(pattern: impl Into<String>) -> Self {
         Self(EntryNamed::file(EntryName::Regex(pattern.into())))
@@ -158,6 +167,15 @@ impl FolderNamed {
         )))
     }
 
+    pub fn any_named(names: Vec<FolderNamed>) -> Self {
+        Self(EntryNamed::folder(EntryName::AnyNamed(
+            names
+                .into_iter()
+                .map(|name| name.entry_name().clone())
+                .collect(),
+        )))
+    }
+
     #[cfg(feature = "regex")]
     pub fn regex(pattern: impl Into<String>) -> Self {
         Self(EntryNamed::folder(EntryName::Regex(pattern.into())))
@@ -207,6 +225,15 @@ impl FileOrFolderNamed {
     pub fn any(names: Vec<impl Into<String>>) -> Self {
         Self(EntryNamed::any(EntryName::Any(
             names.into_iter().map(|name| name.into()).collect(),
+        )))
+    }
+
+    pub fn any_named(names: Vec<FileOrFolderNamed>) -> Self {
+        Self(EntryNamed::any(EntryName::AnyNamed(
+            names
+                .into_iter()
+                .map(|name| name.entry_name().clone())
+                .collect(),
         )))
     }
 

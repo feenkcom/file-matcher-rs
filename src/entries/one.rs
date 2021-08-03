@@ -57,12 +57,21 @@ impl OneEntry {
 
     /// Try to find an exactly one entry of the specified type and name
     pub fn find(&self) -> Result<PathBuf> {
-        let entity_type = self.entry_named.entry_type();
+        let entry_type = self.entry_named.entry_type();
+        let entry_name = self.entry_named.entry_name();
 
-        match self.entry_named.entry_name() {
+        self.find_by_type_and_name(entry_type, entry_name)
+    }
+
+    fn find_by_type_and_name(
+        &self,
+        entry_type: &EntryType,
+        entry_name: &EntryName,
+    ) -> Result<PathBuf> {
+        match entry_name {
             EntryName::Exact(name) => {
                 let entry = self.directory.join(name);
-                if is_readable_entry(entity_type, &entry) {
+                if is_readable_entry(entry_type, &entry) {
                     Ok(entry)
                 } else {
                     FileMatcherError::NotExists(self.clone()).into()
@@ -72,8 +81,30 @@ impl OneEntry {
                 let entries = names
                     .iter()
                     .map(|each| self.directory.join(each))
-                    .filter(|each| is_readable_entry(entity_type, each.as_path()))
+                    .filter(|each| is_readable_entry(entry_type, each.as_path()))
                     .collect::<Vec<PathBuf>>();
+
+                match entries.len() {
+                    0 => FileMatcherError::NotExists(self.clone()).into(),
+                    1 => Ok(entries.first().unwrap().to_owned()),
+                    _ => FileMatcherError::TooMany(self.clone()).into(),
+                }
+            }
+            EntryName::AnyNamed(entry_names) => {
+                let mut entries: Vec<PathBuf> = vec![];
+
+                for entry_name in entry_names {
+                    (match self.find_by_type_and_name(entry_type, entry_name) {
+                        Ok(entry) => {
+                            entries.push(entry);
+                            Ok(())
+                        }
+                        Err(error) => match &error {
+                            FileMatcherError::NotExists(_) => Ok(()),
+                            _ => error.into(),
+                        },
+                    })?;
+                }
 
                 match entries.len() {
                     0 => FileMatcherError::NotExists(self.clone()).into(),
@@ -84,7 +115,7 @@ impl OneEntry {
             #[cfg(feature = "regex")]
             EntryName::Regex(regex_pattern) => {
                 let entries = crate::finders::regex_finder::find_entries_in_directory_matching(
-                    entity_type,
+                    entry_type,
                     regex_pattern,
                     &self.directory,
                 )?;
@@ -97,7 +128,7 @@ impl OneEntry {
             #[cfg(feature = "wildmatch")]
             EntryName::Wildmatch(wildmatch_pattern) => {
                 let entries = crate::finders::wildmatch_finder::find_entries_in_directory_matching(
-                    entity_type,
+                    entry_type,
                     wildmatch_pattern,
                     &self.directory,
                 )?;
