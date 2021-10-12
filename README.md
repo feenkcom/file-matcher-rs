@@ -10,6 +10,7 @@ A Rust library to search files and folders based on the name pattern (regex, wil
 * `wildmatch` - adds a wildcard matching using [Wildmatch crate](https://crates.io/crates/wildmatch)
 * `copier` - allows users to copy declared files and folders, uses [fs_extra crate](https://crates.io/crates/fs_extra)
 * `mover` - allows users to move declared files and folders, uses [fs_extra crate](https://crates.io/crates/fs_extra)
+* `serde` - allows users to serialize / deserialize declared file and folder filters, uses [serde](https://crates.io/crates/serde)
 
 ### Search
 

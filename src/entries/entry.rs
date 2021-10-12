@@ -1,6 +1,10 @@
 use std::fmt::Debug;
 
+#[cfg(feature = "serde")]
+use serde::{Serialize, Deserialize};
+
 /// Represents an entry name that can be of different types
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum EntryName {
     Exact(String),
@@ -13,6 +17,7 @@ pub enum EntryName {
 }
 
 /// Represents a type of the entry such as file, folder or both
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum EntryType {
     File,
@@ -21,6 +26,7 @@ pub enum EntryType {
 }
 
 /// Represents a named entry of some type (file/folder/both)
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub(crate) struct EntryNamed {
     entry_name: EntryName,

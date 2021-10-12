@@ -15,6 +15,9 @@ mod utils;
 use std::fmt::Debug;
 use std::path::PathBuf;
 
+#[cfg(feature = "serde")]
+use serde::{Serialize, Deserialize};
+
 pub use actions::*;
 pub use entries::*;
 
@@ -40,6 +43,7 @@ pub use error::{FileMatcherError, Result};
 /// #    Ok(())
 /// # }
 /// ```
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct FileNamed(EntryNamed);
 
@@ -62,14 +66,17 @@ pub struct FileNamed(EntryNamed);
 /// #    Ok(())
 /// # }
 /// ```
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct FolderNamed(EntryNamed);
 
 /// Defines a file or a folder with various name types.
 /// It is required that there exists exactly one file or folder with a given name description.
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct FileOrFolderNamed(EntryNamed);
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct FilesNamed(EntryNamed);
 
