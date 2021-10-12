@@ -103,10 +103,10 @@ pipeline {
         }
         stage ('Publish') {
             agent {
-                label "${MACOS_M1_TARGET}"
+                label "${LINUX_AMD64_TARGET}"
             }
             environment {
-                TARGET = "${MACOS_M1_TARGET}"
+                TARGET = "${LINUX_AMD64_TARGET}"
             }
             when {
                 expression {
