@@ -13,11 +13,14 @@ pipeline {
     }
     environment {
         GITHUB_TOKEN = credentials('githubrelease')
-        AWSIP = 'ec2-18-197-145-81.eu-central-1.compute.amazonaws.com'
 
         MACOS_INTEL_TARGET = 'x86_64-apple-darwin'
         MACOS_M1_TARGET = 'aarch64-apple-darwin'
+
+        WINDOWS_SERVER_NAME = 'daffy-duck'
         WINDOWS_AMD64_TARGET = 'x86_64-pc-windows-msvc'
+
+        LINUX_SERVER_NAME = 'mickey-mouse'
         LINUX_AMD64_TARGET = 'x86_64-unknown-linux-gnu'
     }
 
@@ -59,7 +62,7 @@ pipeline {
                 }
                 stage ('Linux x86_64') {
                     agent {
-                        label "${LINUX_AMD64_TARGET}"
+                        label "${LINUX_AMD64_TARGET}-${LINUX_SERVER_NAME}"
                     }
                     environment {
                         TARGET = "${LINUX_AMD64_TARGET}"
@@ -75,7 +78,7 @@ pipeline {
                 }
                 stage ('Windows x86_64') {
                     agent {
-                        label "${WINDOWS_AMD64_TARGET}"
+                        label "${WINDOWS_AMD64_TARGET}-${WINDOWS_SERVER_NAME}"
                     }
 
                     environment {
@@ -100,10 +103,10 @@ pipeline {
         }
         stage ('Publish') {
             agent {
-                label "${LINUX_AMD64_TARGET}"
+                label "${MACOS_M1_TARGET}"
             }
             environment {
-                TARGET = "${LINUX_AMD64_TARGET}"
+                TARGET = "${MACOS_M1_TARGET}"
             }
             when {
                 expression {
